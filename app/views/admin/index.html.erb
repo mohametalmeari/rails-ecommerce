@@ -1,5 +1,4 @@
 <h1>Admin Home</h1>
-
 <div class="flex justify-between flex-wrap mt-8 w-full items-center max-w-4xl">
   <h2 class="text-2xl text-gray-800 font-medium mb-4">Daily Stats</h2>
   <div class="flex gap-10 flex-col md:flex-row justify-between w-full">
@@ -36,6 +35,10 @@
       </div>
     </div>
   </div>
-
-  <div data-controller="dashboard"></div>
+  <div class="my-8 w-full">
+    <h2 class="text-2xl text-gray-800 font-medium mb-4">Revenue</h2>
+    <div class="w-full" data-controller="dashboard" data-dashboard-revenue-value="<%= @revenue_by_day.to_json %>">
+      <canvas id="revenueChart"></canvas>
+    </div>
+  </div>
 </div>
