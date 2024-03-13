@@ -4,12 +4,22 @@ class AdminController < ApplicationController
   
   def index
     @orders = Order.where(fulfilled: false).order(created_at: :desc).take(5)
-    @quick_stats = {
-      sales: Order.where(created_at: Time.now.midnight..Time.now).count,
-      revenue: Order.where(created_at: Time.now.midnight..Time.now).sum(:total).round(),
-      avg_sale: Order.where(created_at: Time.now.midnight..Time.now).average(:total).round(),
-      per_sale: OrderProduct.joins(:order).where(orders: {created_at: Time.now.midnight..Time.now}).average(:quantity)
-    }
+    today_orders = Order.where(created_at: Time.now.midnight..Time.now)
+    if today_orders.length != 0
+      @quick_stats = {
+        sales: today_orders.count,
+        revenue: today_orders.sum(:total).round(),
+        avg_sale: today_orders.average(:total).round(),
+        per_sale: OrderProduct.joins(:order).where(orders: {created_at: Time.now.midnight..Time.now}).average(:quantity)
+      }
+    else
+      @quick_stats = {
+        sales: 0,
+        revenue: 0,
+        avg_sale: 0,
+        per_sale: 0
+      }
+    end
     @orders_by_day = Order.where('created_at > ?', Time.now - 7.days).order(:created_at)
     @orders_by_day = @orders_by_day.group_by { |order| order.created_at.to_date }
     @revenue_by_day = @orders_by_day.map { |day, orders| [day.strftime("%A"), orders.sum(&:total)] }
